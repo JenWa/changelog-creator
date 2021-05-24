@@ -1,0 +1,6 @@
+.vscode
+
+node_modules
+build
+# As long as it doesn't work :)
+Changelog.md
