@@ -6,7 +6,10 @@
     "type": "git"
   },
   "license": "MIT",
-  "type": "module",
+  "main": "./build/index.js",
+  "bin": {
+    "changelog-generator": "./build/index.js"
+  },
   "dependencies": {
     "@types/node": "^15.6.0",
     "git-raw-commits": "^2.0.10",
@@ -14,7 +17,7 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "start": "tsc",
+    "start": "tsc & node ./build/index.js",
     "lint": "eslint *.ts",
     "lint:fix": "npm run lint -- --fix",
     "lint-staged": "lint-staged",
