@@ -5,8 +5,10 @@ export const createChangelog = (): Promise<void> => {
   return new Promise<void>(async (resolve, reject) => {
     try {
       const writeable = fs.createWriteStream("Changelog.md", { flags: "a" });
-      const repoTags = await getRepoTags();
-      const groupedCommits = await getVersionChanges(repoTags);
+      const sortedRepoTags = (await getRepoTags()).reverse();
+      const groupedCommits = (
+        await getVersionChanges(sortedRepoTags)
+      ).reverse();
       groupedCommits.forEach((changes: VersionChanges) => {
         writeable.write(`## ${changes.version} \n`);
         changes.commits.forEach((commit) => {
