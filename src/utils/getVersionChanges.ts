@@ -31,7 +31,7 @@ export const getVersionChanges = (
       // Todo: Check for version in package.json and only add this line if the last tag version is smaller than the package version
       groupedCommits.push({
         version: "Head",
-        commits: await getCommits({ from: tags[tags.length] }),
+        commits: await getCommits({ from: tags[tags.length - 1] }),
       });
       resolve(groupedCommits);
     } catch (error) {
