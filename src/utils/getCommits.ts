@@ -10,9 +10,11 @@ interface GitOptions {
 export const getCommits = (commitsRange?: GitOptions): Promise<string[]> => {
   return new Promise<string[]>((resolve, reject) => {
     const commits = [];
-    gitRawCommits(commitsRange)
+    // for format see section "Placeholders that expand to information extracted from the commit"
+    // http://git-scm.com/docs/git-log
+    gitRawCommits({ ...commitsRange, format: "%s  \n%b\n" })
       .on("data", (line) => {
-        commits.push(line.toString());
+        commits.push("* " + line.toString());
       })
       .on("error", (error) => {
         reject(error);
