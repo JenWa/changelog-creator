@@ -7,6 +7,8 @@ interface GitOptions {
   to?: string;
 }
 
+const isMergeCommit = (commit: string): boolean => commit.startsWith("Merge");
+
 export const getCommits = (commitsRange?: GitOptions): Promise<string[]> => {
   return new Promise<string[]>((resolve, reject) => {
     const commits = [];
@@ -14,7 +16,9 @@ export const getCommits = (commitsRange?: GitOptions): Promise<string[]> => {
     // http://git-scm.com/docs/git-log
     gitRawCommits({ ...commitsRange, format: "%s  \n%b\n" })
       .on("data", (line) => {
-        commits.push("* " + line.toString());
+        if (!isMergeCommit(line.toString())) {
+          commits.push("* " + line.toString());
+        }
       })
       .on("error", (error) => {
         reject(error);
