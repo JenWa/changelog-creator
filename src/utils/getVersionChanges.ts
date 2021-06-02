@@ -1,4 +1,5 @@
 import { getCommits } from "./getCommits";
+import { getUpcomingVersion } from "./getUpcomingVersion";
 
 export interface VersionChanges {
   version: string;
@@ -11,8 +12,9 @@ export const getVersionChanges = (
   return new Promise<VersionChanges[]>(async (resolve, reject) => {
     try {
       if (tags.length < 1) {
-        // Todo: retreive version from package json
-        resolve([{ version: "No version yet", commits: await getCommits() }]);
+        resolve([
+          { version: getUpcomingVersion(tags), commits: await getCommits() },
+        ]);
       }
       const groupedCommits: VersionChanges[] = [
         {
@@ -30,8 +32,8 @@ export const getVersionChanges = (
       });
       // Todo: Check for version in package.json and only add this line if the last tag version is smaller than the package version
       groupedCommits.push({
-        version: "Head",
-        commits: await getCommits({ from: tags[tags.length] }),
+        version: getUpcomingVersion(tags),
+        commits: await getCommits({ from: tags[tags.length - 1] }),
       });
       resolve(groupedCommits);
     } catch (error) {

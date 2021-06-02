@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { cli } from "./cli.js";
+import { passCLIArgumentsToOptions } from "./utils";
 
-console.info(`Cli started with following args: \n${process.argv}`);
+passCLIArgumentsToOptions();
 cli();
