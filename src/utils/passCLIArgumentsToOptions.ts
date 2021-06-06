@@ -7,11 +7,13 @@ export const passCLIArgumentsToOptions = (): void => {
     {
       "--tag-prefix": String,
       "-t": "--tag-prefix",
+      "--releases-only": Boolean,
+      "-r": "--releases-only",
     },
     { permissive: true, argv: process.argv.slice(2) }
   );
-  console.log(args["--tag-prefix"]);
   OPTIONS.tagPrefix = args["--tag-prefix"] ?? OPTIONS.tagPrefix;
+  OPTIONS.releasesOnly = args["--releases-only"] ?? OPTIONS.releasesOnly;
   if (args._.length > 0) {
     console.warn(
       `Following arguments aren't recognized. Ignoring them: \n${args._}`
