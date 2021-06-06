@@ -1,3 +1,4 @@
+import OPTIONS from "../options";
 import { getCommits } from "./getCommits";
 import { getUpcomingVersion } from "./getUpcomingVersion";
 
@@ -11,10 +12,21 @@ export const getVersionChanges = (
 ): Promise<VersionChanges[]> => {
   return new Promise<VersionChanges[]>(async (resolve, reject) => {
     try {
+      const upcomingRelease = getUpcomingVersion(tags);
+      const addUpcomingSection =
+        OPTIONS.hasUpcomingSection || upcomingRelease.isReady;
+
       if (tags.length < 1) {
-        resolve([
-          { version: getUpcomingVersion(tags), commits: await getCommits() },
-        ]);
+        resolve(
+          addUpcomingSection
+            ? [
+                {
+                  version: upcomingRelease.version,
+                  commits: await getCommits(),
+                },
+              ]
+            : []
+        );
       }
       const groupedCommits: VersionChanges[] = [
         {
@@ -30,11 +42,11 @@ export const getVersionChanges = (
           });
         }
       });
-      // Todo: Check for version in package.json and only add this line if the last tag version is smaller than the package version
-      groupedCommits.push({
-        version: getUpcomingVersion(tags),
-        commits: await getCommits({ from: tags[tags.length - 1] }),
-      });
+      addUpcomingSection &&
+        groupedCommits.push({
+          version: upcomingRelease.version,
+          commits: await getCommits({ from: tags[tags.length - 1] }),
+        });
       resolve(groupedCommits);
     } catch (error) {
       reject(error);
