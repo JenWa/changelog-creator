@@ -4,7 +4,7 @@ import { getRepoTags, getVersionChanges, VersionChanges } from "./utils";
 export const createChangelog = (): Promise<void> => {
   return new Promise<void>(async (resolve, reject) => {
     try {
-      const writeable = fs.createWriteStream("Changelog.md", { flags: "a" });
+      const writeable = fs.createWriteStream("Changelog.md", { flags: "w" });
       const sortedRepoTags = (await getRepoTags()).reverse();
       const groupedCommits = (
         await getVersionChanges(sortedRepoTags)
