@@ -1,10 +1,10 @@
 import OPTIONS from "../options";
-import { getCommits } from "./getCommits";
+import { getCommits, GroupedCommits } from "./getCommits";
 import { getUpcomingVersion } from "./getUpcomingVersion";
 
 export interface VersionChanges {
   version: string;
-  commits: string[];
+  commits: GroupedCommits;
 }
 
 export const getVersionChanges = (

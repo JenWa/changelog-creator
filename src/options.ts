@@ -2,6 +2,7 @@ type Options = {
   tagPrefix: string;
   releasesOnly: boolean;
   hasUpcomingSection: boolean;
+  sortBy?: "type";
 };
 
 /**
