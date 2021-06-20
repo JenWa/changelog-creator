@@ -1,14 +1,20 @@
 {
-  "name": "changelog-generator",
+  "name": "changelog-creator",
   "version": "0.1.0",
   "description": "Generate a changelog from git metadata",
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": "https://github.com/JenWa/changelog-creator.git"
   },
+  "author": "Jennifer Walocha",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JenWa/changelog-creator/issues"
+  },
+  "homepage": "https://github.com/JenWa/changelog-creator#readme",
   "main": "./build/index.js",
   "bin": {
-    "changelog-generator": "./build/index.js"
+    "changelog-creator": "./build/index.js"
   },
   "dependencies": {
     "@types/node": "^15.6.0",
