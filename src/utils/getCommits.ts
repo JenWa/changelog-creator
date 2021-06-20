@@ -30,6 +30,23 @@ enum AngularType {
   test = "test",
 }
 
+const defuseHTML = (commitMessage: string): string => {
+  const defusedCommitSnippets: [string[], number] = [[], 0];
+  const htmlTagMatches = commitMessage.matchAll(/<\s*\/?\s*[^>]*>/g);
+  for (const match of htmlTagMatches) {
+    const startIndex = match.index;
+    const endIndex = match.index + match[0].length;
+    defusedCommitSnippets[0].push(
+      commitMessage.slice(defusedCommitSnippets[1], startIndex)
+    );
+    defusedCommitSnippets[0].push("`" + match[0] + "`");
+    defusedCommitSnippets[1] = endIndex;
+  }
+  return defusedCommitSnippets[0].length > 0
+    ? defusedCommitSnippets[0].join("")
+    : commitMessage;
+};
+
 const isMergeCommit = (commit: string): boolean => commit.startsWith("Merge");
 
 export const getCommits = (
@@ -47,7 +64,7 @@ export const getCommits = (
     // http://git-scm.com/docs/git-log
     gitRawCommits({ ...commitsRange, format: "%s  \n%b\n" })
       .on("data", (line) => {
-        const commitMessage = line.toString();
+        const commitMessage = defuseHTML(line.toString());
         let commitType = UNKNOWN_TYPE;
         if (!isMergeCommit(commitMessage)) {
           if (OPTIONS.sortBy) {
