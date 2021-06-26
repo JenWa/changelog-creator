@@ -1,7 +1,7 @@
 import gitSemverTags from "git-semver-tags";
 import OPTIONS from "../options";
 
-export const getRepoTags = (): Promise<string[]> => {
+export function getRepoTags(): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
     gitSemverTags(function (error: Error, tags: string[]) {
       if (error) {
@@ -12,4 +12,4 @@ export const getRepoTags = (): Promise<string[]> => {
       );
     });
   });
-};
+}

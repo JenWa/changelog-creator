@@ -1,7 +1,7 @@
 import arg from "arg";
 import OPTIONS from "../options";
 
-export const passCLIArgumentsToOptions = (): void => {
+export function passCLIArgumentsToOptions(): void {
   console.info(`The options from cli: ${process.argv.slice(2)}`);
   const args = arg(
     {
@@ -26,4 +26,4 @@ export const passCLIArgumentsToOptions = (): void => {
       `Following arguments aren't recognized. Ignoring them: \n${args._}`
     );
   }
-};
+}

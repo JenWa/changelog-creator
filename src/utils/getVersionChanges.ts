@@ -7,49 +7,41 @@ export interface VersionChanges {
   commits: GroupedCommits;
 }
 
-export const getVersionChanges = (
+export async function getVersionChanges(
   tags: string[]
-): Promise<VersionChanges[]> => {
-  return new Promise<VersionChanges[]>(async (resolve, reject) => {
-    try {
-      const upcomingRelease = getUpcomingVersion(tags);
-      const addUpcomingSection =
-        OPTIONS.hasUpcomingSection || upcomingRelease.isReady;
+): Promise<VersionChanges[]> {
+  const upcomingRelease = getUpcomingVersion(tags);
+  const addUpcomingSection =
+    OPTIONS.hasUpcomingSection || upcomingRelease.isReady;
 
-      if (tags.length < 1) {
-        resolve(
-          addUpcomingSection
-            ? [
-                {
-                  version: upcomingRelease.version,
-                  commits: await getCommits(),
-                },
-              ]
-            : []
-        );
-      }
-      const groupedCommits: VersionChanges[] = [
-        {
-          version: tags[0],
-          commits: await getCommits({ to: tags[0] }),
-        },
-      ];
-      tags.forEach(async (tag, i) => {
-        if (0 < i && i < tags.length) {
-          groupedCommits.push({
-            version: tag,
-            commits: await getCommits({ from: tags[i - 1], to: tag }),
-          });
-        }
+  if (tags.length < 1) {
+    return addUpcomingSection
+      ? [
+          {
+            version: upcomingRelease.version,
+            commits: await getCommits(),
+          },
+        ]
+      : [];
+  }
+  const groupedCommits: VersionChanges[] = [
+    {
+      version: tags[0],
+      commits: await getCommits({ to: tags[0] }),
+    },
+  ];
+  tags.forEach(async (tag, i) => {
+    if (0 < i && i < tags.length) {
+      groupedCommits.push({
+        version: tag,
+        commits: await getCommits({ from: tags[i - 1], to: tag }),
       });
-      addUpcomingSection &&
-        groupedCommits.push({
-          version: upcomingRelease.version,
-          commits: await getCommits({ from: tags[tags.length - 1] }),
-        });
-      resolve(groupedCommits);
-    } catch (error) {
-      reject(error);
     }
   });
-};
+  addUpcomingSection &&
+    groupedCommits.push({
+      version: upcomingRelease.version,
+      commits: await getCommits({ from: tags[tags.length - 1] }),
+    });
+  return groupedCommits;
+}
