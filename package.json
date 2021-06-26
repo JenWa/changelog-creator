@@ -8,6 +8,14 @@
   },
   "author": "Jennifer Walocha",
   "license": "MIT",
+  "keywords": [
+    "changelog",
+    "changelog generation",
+    "conventional commits",
+    "conventional changelog",
+    "conventional",
+    "angular"
+  ],
   "bugs": {
     "url": "https://github.com/JenWa/changelog-creator/issues"
   },
