@@ -2,5 +2,5 @@
 import { cli } from "./cli.js";
 import { passCLIArgumentsToOptions } from "./utils";
 
-passCLIArgumentsToOptions();
-cli();
+const { hasHelpFlag } = passCLIArgumentsToOptions();
+if (!hasHelpFlag) cli();
