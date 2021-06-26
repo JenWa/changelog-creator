@@ -30,7 +30,7 @@ enum AngularType {
   test = "test",
 }
 
-const defuseHTML = (commitMessage: string): string => {
+function defuseHTML(commitMessage: string): string {
   const defusedCommitSnippets: [string[], number] = [[], 0];
   const htmlTagMatches = commitMessage.matchAll(/<\s*\/?\s*[^>]*>/g);
   for (const match of htmlTagMatches) {
@@ -45,13 +45,11 @@ const defuseHTML = (commitMessage: string): string => {
   return defusedCommitSnippets[0].length > 0
     ? defusedCommitSnippets[0].join("")
     : commitMessage;
-};
+}
 
 const isMergeCommit = (commit: string): boolean => commit.startsWith("Merge");
 
-export const getCommits = (
-  commitsRange?: GitOptions
-): Promise<GroupedCommits> => {
+export function getCommits(commitsRange?: GitOptions): Promise<GroupedCommits> {
   return new Promise<GroupedCommits>((resolve, reject) => {
     const commits: GroupedCommits = { [UNKNOWN_TYPE]: [] };
     for (const type in AngularType) {
@@ -85,4 +83,4 @@ export const getCommits = (
         resolve(commits);
       });
   });
-};
+}
