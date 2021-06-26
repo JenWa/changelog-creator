@@ -1,0 +1,11 @@
+.husky
+.commitlintrc.json
+.eslintrc.json
+tsconfig.json
+
+node_modules
+
+src
+
+# map files in build folder
+*.map
