@@ -15,18 +15,21 @@ export interface Commit {
 const UNKNOWN_TYPE = "others";
 
 export type GroupedCommits = {
-  [Key in AngularType]?: Commit[];
+  [Key in ConventionalType]?: Commit[];
 } &
   { [Key in "others"]?: Commit[] };
 
-enum AngularType {
+enum ConventionalType {
+  build = "build",
+  chore = "chore",
+  ci = "ci",
+  docs = "docs",
   feat = "feat",
   fix = "fix",
-  chore = "chore",
-  docs = "docs",
-  style = "style",
-  refactor = "refactor",
   perf = "perf",
+  refactor = "refactor",
+  revert = "revert",
+  style = "style",
   test = "test",
 }
 
@@ -52,11 +55,11 @@ const isMergeCommit = (commit: string): boolean => commit.startsWith("Merge");
 export function getCommits(commitsRange?: GitOptions): Promise<GroupedCommits> {
   return new Promise<GroupedCommits>((resolve, reject) => {
     const commits: GroupedCommits = { [UNKNOWN_TYPE]: [] };
-    for (const type in AngularType) {
+    for (const type in ConventionalType) {
       commits[type] = [];
     }
-    const angularTypes = Object.keys(AngularType).map(
-      (type) => AngularType[type]
+    const angularTypes = Object.keys(ConventionalType).map(
+      (type) => ConventionalType[type]
     );
     // for format see section "Placeholders that expand to information extracted from the commit"
     // http://git-scm.com/docs/git-log
