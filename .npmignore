@@ -1,4 +1,5 @@
 .husky
+.vscode
 .commitlintrc.json
 .eslintrc.json
 tsconfig.json
