@@ -1,3 +1,4 @@
+import "core-js/features/string/virtual";
 import gitRawCommits from "git-raw-commits";
 import OPTIONS from "../options";
 
@@ -15,9 +16,8 @@ export interface Commit {
 const UNKNOWN_TYPE = "others";
 
 export type GroupedCommits = {
-  [Key in ConventionalType]?: Commit[];
-} &
-  { [Key in "others"]?: Commit[] };
+  [Key in ConventionalType | "others"]: Commit[];
+};
 
 enum ConventionalType {
   build = "build",
@@ -33,51 +33,38 @@ enum ConventionalType {
   test = "test",
 }
 
-function defuseHTML(commitMessage: string): string {
-  const defusedCommitSnippets: [string[], number] = [[], 0];
-  const htmlTagMatches = commitMessage.matchAll(/<\s*\/?\s*[^>]*>/g);
-  for (const match of htmlTagMatches) {
-    const startIndex = match.index;
-    const endIndex = match.index + match[0].length;
-    defusedCommitSnippets[0].push(
-      commitMessage.slice(defusedCommitSnippets[1], startIndex)
-    );
-    defusedCommitSnippets[0].push("`" + match[0] + "`");
-    defusedCommitSnippets[1] = endIndex;
-  }
-  return defusedCommitSnippets[0].length > 0
-    ? defusedCommitSnippets[0].join("")
-    : commitMessage;
-}
+const defuseHTML = (commitMessage: string): string =>
+  commitMessage.replaceAll(/<\s*\/?\s*[^>]*>/g, `\`$&\``) as string;
 
 const isMergeCommit = (commit: string): boolean => commit.startsWith("Merge");
 
 export function getCommits(commitsRange?: GitOptions): Promise<GroupedCommits> {
   return new Promise<GroupedCommits>((resolve, reject) => {
-    const commits: GroupedCommits = { [UNKNOWN_TYPE]: [] };
-    for (const type in ConventionalType) {
-      commits[type] = [];
-    }
-    const angularTypes = Object.keys(ConventionalType).map(
-      (type) => ConventionalType[type]
+    const conventionalTypes = Object.values(ConventionalType);
+    const commits: GroupedCommits = <GroupedCommits>(
+      conventionalTypes.reduce(
+        (accu, current) => ({ ...accu, [current]: [] }),
+        { [UNKNOWN_TYPE]: [] as Commit[] }
+      )
     );
+
     // for format see section "Placeholders that expand to information extracted from the commit"
     // http://git-scm.com/docs/git-log
     gitRawCommits({ ...commitsRange, format: "%s  \n%b\n" })
       .on("data", (line) => {
         const commitMessage = defuseHTML(line.toString());
-        let commitType = UNKNOWN_TYPE;
-        if (!isMergeCommit(commitMessage)) {
-          if (OPTIONS.sortBy) {
-            commitType = angularTypes.find((type) => {
-              const regex = new RegExp(`^${type}`);
-              if (regex.test(commitMessage)) return type;
-            });
-          }
-          commits[commitType || UNKNOWN_TYPE].push({
-            message: "*  " + commitMessage,
-          });
+        if (isMergeCommit(commitMessage)) {
+          return;
         }
+
+        const commitType =
+          conventionalTypes.find(
+            (type) => OPTIONS.sortBy && commitMessage.startsWith(type)
+          ) ?? UNKNOWN_TYPE;
+
+        commits[commitType].push({
+          message: "*  " + commitMessage,
+        });
       })
       .on("error", (error) => {
         reject(error);
