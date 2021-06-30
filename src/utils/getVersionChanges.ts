@@ -13,18 +13,8 @@ export async function getVersionChanges(
   const upcomingRelease = getUpcomingVersion(tags);
   const addUpcomingSection =
     OPTIONS.hasUpcomingSection || upcomingRelease.isReady;
-
-  if (tags.length < 1) {
-    return addUpcomingSection
-      ? [
-          {
-            version: upcomingRelease.version,
-            commits: await getCommits(),
-          },
-        ]
-      : [];
-  }
   const groupedCommits: VersionChanges[] = [];
+
   let previousTag: string | undefined = undefined;
   for (const tag of tags) {
     groupedCommits.push({
@@ -33,10 +23,12 @@ export async function getVersionChanges(
     });
     previousTag = tag;
   }
-  addUpcomingSection &&
+
+  if (addUpcomingSection) {
     groupedCommits.push({
       version: upcomingRelease.version,
       commits: await getCommits({ from: tags[tags.length - 1] }),
     });
+  }
   return groupedCommits;
 }
