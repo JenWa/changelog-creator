@@ -70,7 +70,7 @@ export function getCommits(commitsRange?: GitOptions): Promise<GroupedCommits> {
           ) ?? UNKNOWN_TYPE;
 
         commits[commitType].push({
-          message: "*  " + commitMessage,
+          message: `*  ${commitMessage}`,
         });
       })
       .on("error", (error) => {

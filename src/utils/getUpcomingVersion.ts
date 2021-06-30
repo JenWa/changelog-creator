@@ -2,7 +2,7 @@ import fs from "fs";
 import OPTIONS from "../options";
 
 const isUpcomingReleaseDefined = (tags: string[], packageVersion: string) =>
-  tags.includes(OPTIONS.tagPrefix + packageVersion) ||
+  tags.includes(`${OPTIONS.tagPrefix}${packageVersion}`) ||
   packageVersion === "0.0.0" ||
   (packageVersion.includes("-") && !OPTIONS.releasesOnly);
 
