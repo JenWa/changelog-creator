@@ -74,7 +74,7 @@ export function getCommits(commitsRange?: GitOptions): Promise<GroupedCommits> {
         });
       })
       .on("error", (error) => {
-        reject(error);
+        reject(`An error occured while parsing for commits:\n${error}`);
       })
       .on("end", () => {
         resolve(commits);
