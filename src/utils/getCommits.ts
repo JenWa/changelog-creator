@@ -1,10 +1,11 @@
+import "core-js/features/string/virtual";
 import gitRawCommits from "git-raw-commits";
 import OPTIONS from "../options";
 
 interface GitOptions {
-  /** Defines the earliest tag version the commit messages are retrieved. */
+  /** The tag that has been created before the tag specified through the `to` prop. */
   from?: string;
-  /** Defines untill which tag version the commit messages are retrieved. */
+  /** The tag that has been created after the tag specified through the `from` prop. */
   to?: string;
 }
 
@@ -15,9 +16,8 @@ export interface Commit {
 const UNKNOWN_TYPE = "others";
 
 export type GroupedCommits = {
-  [Key in ConventionalType]?: Commit[];
-} &
-  { [Key in "others"]?: Commit[] };
+  [Key in ConventionalType | "others"]: Commit[];
+};
 
 enum ConventionalType {
   build = "build",
@@ -33,54 +33,48 @@ enum ConventionalType {
   test = "test",
 }
 
-function defuseHTML(commitMessage: string): string {
-  const defusedCommitSnippets: [string[], number] = [[], 0];
-  const htmlTagMatches = commitMessage.matchAll(/<\s*\/?\s*[^>]*>/g);
-  for (const match of htmlTagMatches) {
-    const startIndex = match.index;
-    const endIndex = match.index + match[0].length;
-    defusedCommitSnippets[0].push(
-      commitMessage.slice(defusedCommitSnippets[1], startIndex)
-    );
-    defusedCommitSnippets[0].push("`" + match[0] + "`");
-    defusedCommitSnippets[1] = endIndex;
-  }
-  return defusedCommitSnippets[0].length > 0
-    ? defusedCommitSnippets[0].join("")
-    : commitMessage;
-}
+/** Since the commit messages are written in a markdown file, html tags have to be "neutralized" */
+const sanitizeCommitMessage = (commitMessage: string): string =>
+  commitMessage.replaceAll(/<\s*\/?\s*[^>]*>/g, `\`$&\``) as string;
 
 const isMergeCommit = (commit: string): boolean => commit.startsWith("Merge");
 
+/**
+ * Returns all the commits lying in the defined range of the versions.
+ * E.g. if you have 3 tags v1.0.0, v2.0.0 and v.3.0.0 you could either receive all commits
+ * by passing { to: v3.0.0 } or if you like to receive the commits from version v2.0.0 you have
+ * to pass { from: v1.0.0, to: v2.0.0 }.
+ */
 export function getCommits(commitsRange?: GitOptions): Promise<GroupedCommits> {
   return new Promise<GroupedCommits>((resolve, reject) => {
-    const commits: GroupedCommits = { [UNKNOWN_TYPE]: [] };
-    for (const type in ConventionalType) {
-      commits[type] = [];
-    }
-    const angularTypes = Object.keys(ConventionalType).map(
-      (type) => ConventionalType[type]
+    const conventionalTypes = Object.values(ConventionalType);
+    const commits: GroupedCommits = <GroupedCommits>(
+      conventionalTypes.reduce(
+        (accu, current) => ({ ...accu, [current]: [] }),
+        { [UNKNOWN_TYPE]: [] as Commit[] }
+      )
     );
+
     // for format see section "Placeholders that expand to information extracted from the commit"
     // http://git-scm.com/docs/git-log
     gitRawCommits({ ...commitsRange, format: "%s  \n%b\n" })
       .on("data", (line) => {
-        const commitMessage = defuseHTML(line.toString());
-        let commitType = UNKNOWN_TYPE;
-        if (!isMergeCommit(commitMessage)) {
-          if (OPTIONS.sortBy) {
-            commitType = angularTypes.find((type) => {
-              const regex = new RegExp(`^${type}`);
-              if (regex.test(commitMessage)) return type;
-            });
-          }
-          commits[commitType || UNKNOWN_TYPE].push({
-            message: "*  " + commitMessage,
-          });
+        const commitMessage = sanitizeCommitMessage(line.toString());
+        if (isMergeCommit(commitMessage)) {
+          return;
         }
+
+        const commitType =
+          conventionalTypes.find(
+            (type) => OPTIONS.sortBy && commitMessage.startsWith(type)
+          ) ?? UNKNOWN_TYPE;
+
+        commits[commitType].push({
+          message: `*  ${commitMessage}`,
+        });
       })
       .on("error", (error) => {
-        reject(error);
+        reject(`An error occured while parsing for commits:\n${error}`);
       })
       .on("end", () => {
         resolve(commits);
