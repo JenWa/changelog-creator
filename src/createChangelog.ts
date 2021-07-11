@@ -3,7 +3,7 @@ import OPTIONS from "./options";
 import { getRepoTags, getVersionChanges, VersionChanges } from "./utils";
 
 export async function createChangelog(): Promise<void> {
-  const writeable = createWriteStream("Changelog.md", { flags: "w" });
+  const writeable = createWriteStream(OPTIONS.fileName, { flags: "w" });
   const sortedRepoTags = (await getRepoTags()).reverse();
   const versions = (await getVersionChanges(sortedRepoTags)).reverse();
   versions.forEach((versionChanges: VersionChanges) => {

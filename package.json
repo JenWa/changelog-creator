@@ -31,8 +31,9 @@
     "git-semver-tags": "^4.1.1"
   },
   "scripts": {
-    "start": "tsc & node ./build/index.js",
+    "start": "tsc & npm run changelog -- --file-name=Changelog-Test.md",
     "build": "tsc",
+    "changelog": "node ./build/index.js --sort-by=type",
     "lint": "eslint *.ts",
     "lint:fix": "npm run lint -- --fix",
     "lint-staged": "lint-staged",

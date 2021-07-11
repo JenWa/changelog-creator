@@ -2,5 +2,5 @@
 
 node_modules
 build
-# As long as it doesn't work :)
-Changelog.md
+# For manual testing
+Changelog-Test.md
