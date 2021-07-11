@@ -67,15 +67,17 @@ in order to see all possible configurations.
 The output is currently:
 
 ```terminal
-  "--tag-prefix", "-t": Define which prefix you use for your tags. Default: "v", e.g. "v1.0.1".
+  "--file-name", "-f":           Define the file name of the changelog. Default: "Changelog.md"
 
-  "--releases-only","-r": If the Changelog should be only grouped in releases and not also in pre-releases. Default: Pre-releases appear in Changelog.
+  "--tag-prefix", "-t":          Define which prefix you use for your tags. Default: "v", e.g. "v1.0.1".
+
+  "--releases-only","-r":        If the Changelog should be only grouped in releases and not also in pre-releases. Default: Pre-releases appear in Changelog.
 
   "--has-upcoming-section","-u": If the Changelog should have a section with the latest commits which don't belong to a version yet. Default: false.
 
-  "--sort-by","-s": If the commits should be grouped. Options: "type" | undefined. Default: undefined.
+  "--sort-by","-s":              If the commits should be grouped. Options: "type" | undefined. Default: undefined.
 
-  "--help", "-h": Display help for this package.
+  "--help", "-h":                Display help for this package.
 ```
 
 ## Usage
@@ -83,13 +85,14 @@ The output is currently:
 The default configuration for this package is:
 
 ```json
+ "--file-name": "Changelog.md",
  "--tag-prefix": "v",
  "--releases-only": false,
  "--has-upcoming-section": false,
  "--sort-by": undefined
 ```
 
-which leads to a Changelog that is only grouped by tags (and maybe also your package.json version)
+which leads to a Changelog saved as Changelog.md file. The commits in this Changelog are grouped by tags (and maybe also your package.json version)
 and the commits are listed by creation date. Pre-releases aren't filtered in this setup.
 
 If you have the following setup
@@ -106,12 +109,16 @@ package.json:
 
 then the Changelog will contain the sections `v0.1.0`, `v0.2.0`, `v0.3.0-alpha.1` and `v0.3.0`.
 
+### --file-name
+
+Defines the name of your changelog file. Default is `Changelog.md`.
+
 ### --tag-prefix
 
 Please note that the Changelog can currently only be created, if the tags follow the
 [semantic versioning specification](https://semver.org/spec/v2.0.0.html).
-The prefix of the tag can be defined via `--tag-prefix=meow-`. So having tags like
-`0.1.0` or `meow-0.1.0` is fine as long as you define it as a prefix in this package.
+The prefix of the tag can be defined via `--tag-prefix=meow`. So having tags like
+`0.1.0` or `meow0.1.0` is fine as long as you define it as a prefix in this package.
 
 ### --releases-only
 
