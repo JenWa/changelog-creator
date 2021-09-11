@@ -15,7 +15,7 @@ export function getRepoTags(): Promise<string[]> {
         resolve(
           !OPTIONS.releasesOnly
             ? tags
-            : tags.filter((tag) => !tag.includes("-"))
+            : tags.filter((tag) => !tag.includes(OPTIONS.preId))
         );
       }
     );

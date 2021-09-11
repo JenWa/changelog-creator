@@ -13,7 +13,7 @@ const isVersionAlreadyAssigned = (
   !packageVersion ||
   tags.includes(packageVersion) ||
   packageVersion === `${OPTIONS.tagPrefix}0.0.0` ||
-  (packageVersion.includes("-") && !OPTIONS.releasesOnly);
+  (packageVersion.includes(OPTIONS.preId) && !OPTIONS.releasesOnly);
 
 export function getUpcomingVersion(tags: string[]): UpcomingRelease {
   const packageJson = readFileSync("package.json").toString();

@@ -21,6 +21,8 @@ export function passCLIArgumentsToOptions(): CLIArguments {
       "-s": "--sort-by",
       "--help": Boolean,
       "-h": "--help",
+      "--pre-id": String,
+      "-p": "--pre-id",
     },
     { permissive: true, argv: process.argv.slice(2) }
   );
@@ -33,12 +35,13 @@ export function passCLIArgumentsToOptions(): CLIArguments {
 
     "--file-name", "-f":           Define the file name of the changelog. Default: "Changelog.md"
     "--tag-prefix", "-t":          Define which prefix you use for your tags. Default: "v", e.g. "v.1.0.1".
+    "--pre-id", "-p":              Define which prerelease-id you use. Default: "alpha", e.g. "v.1.1.0-alpha.1".
     "--releases-only","-r":        If the Changelog should be only grouped in releases and not also in pre-releases. Default: Pre-releases appear in Changelog. 
     "--has-upcoming-section","-u": If the Changelog should have a section with the latest commits which don't belong to a version yet. Default: false.
     "--sort-by","-s":              If the commits should be grouped. Options: "type" | undefined. Default: undefined.
     "--help", "-h":                Display help for this package.
     
-    For further information have a look at npm's  at https://github.com/JenWa/changelog-creator#readme.
+    For further information have a look at https://github.com/JenWa/changelog-creator#readme.
     `);
   } else {
     OPTIONS.fileName = args["--file-name"] ?? OPTIONS.fileName;
@@ -47,6 +50,7 @@ export function passCLIArgumentsToOptions(): CLIArguments {
     OPTIONS.hasUpcomingSection =
       args["--has-upcoming-section"] ?? OPTIONS.hasUpcomingSection;
     OPTIONS.sortBy = args["--sort-by"] === "type" ? "type" : OPTIONS.sortBy;
+    OPTIONS.preId = args["--pre-id"] ?? OPTIONS.preId;
     if (args._.length > 0) {
       console.warn(
         `Following arguments aren't recognized. Ignoring them: \n${args._}`
