@@ -4,6 +4,7 @@ type Options = {
   releasesOnly: boolean;
   sortBy?: "type";
   tagPrefix: string;
+  preId: string;
 };
 
 /**
@@ -15,5 +16,6 @@ const OPTIONS: Options = {
   hasUpcomingSection: false,
   releasesOnly: false,
   tagPrefix: "v",
+  preId: "-alpha",
 };
 export default OPTIONS;

@@ -71,6 +71,8 @@ The output is currently:
 
   "--tag-prefix", "-t":          Define which prefix you use for your tags. Default: "v", e.g. "v1.0.1".
 
+  "--pre-id", "-p":              Define which prerelease-id you use. Default: "-alpha", e.g. "v.1.1.0-alpha.1".
+
   "--releases-only","-r":        If the Changelog should be only grouped in releases and not also in pre-releases. Default: Pre-releases appear in Changelog.
 
   "--has-upcoming-section","-u": If the Changelog should have a section with the latest commits which don't belong to a version yet. Default: false.
@@ -87,6 +89,7 @@ The default configuration for this package is:
 ```json
  "--file-name": "Changelog.md",
  "--tag-prefix": "v",
+ "--pre-id": "-alpha",
  "--releases-only": false,
  "--has-upcoming-section": false,
  "--sort-by": undefined
@@ -115,10 +118,15 @@ Defines the name of your changelog file. Default is `Changelog.md`.
 
 ### --tag-prefix
 
-Please note that the Changelog can currently only be created, if the tags follow the
-[semantic versioning specification](https://semver.org/spec/v2.0.0.html).
 The prefix of the tag can be defined via `--tag-prefix=meow`. So having tags like
 `0.1.0` or `meow0.1.0` is fine as long as you define it as a prefix in this package.
+Please note that the Changelog can currently only be created, if the tags follow the
+[semantic versioning specification](https://semver.org/spec/v2.0.0.html).
+
+### --pre-id
+
+Define which prerelease-id you use. This is the id you defined e.g. via the [npm version](https://docs.npmjs.com/cli/v6/commands/npm-version) command.  
+Default is "-alpha" so a tagged version "v.1.1.0-alpha.1" is detected as pre-release.
 
 ### --releases-only
 
@@ -139,6 +147,6 @@ The commit messages in the Changelog are grouped by tags. The commit messages be
 section are sorted by creation date per default. However, it is possible to sort them by type.
 Currently, only conventional commits are supported.
 
-#### Accepted values
+Accepted values:
 
 - type
