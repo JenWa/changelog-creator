@@ -23,6 +23,7 @@ export function passCLIArgumentsToOptions(): CLIArguments {
       "-h": "--help",
       "--pre-id": String,
       "-p": "--pre-id",
+      "--hide-date": Boolean,
     },
     { permissive: true, argv: process.argv.slice(2) }
   );
@@ -40,6 +41,7 @@ export function passCLIArgumentsToOptions(): CLIArguments {
     "--has-upcoming-section","-u": If the Changelog should have a section with the latest commits which don't belong to a version yet. Default: false.
     "--sort-by","-s":              If the commits should be grouped. Options: "type" | undefined. Default: undefined.
     "--help", "-h":                Display help for this package.
+    "--hide-date":                 Don't display the release date next to the version.
     
     For further information have a look at https://github.com/JenWa/changelog-creator#readme.
     `);
@@ -51,6 +53,7 @@ export function passCLIArgumentsToOptions(): CLIArguments {
       args["--has-upcoming-section"] ?? OPTIONS.hasUpcomingSection;
     OPTIONS.sortBy = args["--sort-by"] === "type" ? "type" : OPTIONS.sortBy;
     OPTIONS.preId = args["--pre-id"] ?? OPTIONS.preId;
+    OPTIONS.hideDate = !!args["--hide-date"];
     if (args._.length > 0) {
       console.warn(
         `Following arguments aren't recognized. Ignoring them: \n${args._}`
