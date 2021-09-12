@@ -5,6 +5,7 @@ type Options = {
   sortBy?: "type";
   tagPrefix: string;
   preId: string;
+  hideDate?: boolean;
 };
 
 /**

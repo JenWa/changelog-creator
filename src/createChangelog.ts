@@ -3,8 +3,10 @@ import OPTIONS from "./options";
 import { getRepoTags, getVersionChanges, VersionChanges } from "./utils";
 
 function getVersionHeadline(version: string, date?: string) {
-  const versionDateText = date ? `(${date})` : "";
-  return `## ${version} ${versionDateText} \n`;
+  if (OPTIONS.hideDate || !date) {
+    return `## ${version} \n`;
+  }
+  return `## ${version} (${date}) \n`;
 }
 
 export async function createChangelog(): Promise<void> {
