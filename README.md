@@ -80,6 +80,8 @@ The output is currently:
   "--sort-by","-s":              If the commits should be grouped. Options: "type" | undefined. Default: undefined.
 
   "--help", "-h":                Display help for this package.
+
+  "--hide-date":                 Don't display the release date next to the version. Default: false
 ```
 
 ## Usage
@@ -150,3 +152,7 @@ Currently, only conventional commits are supported.
 Accepted values:
 
 - type
+
+### --hide-date
+
+The release date of the version will not be displayed next to the version in the Changelog. Default is false.
